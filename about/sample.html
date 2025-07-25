@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blog Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+    }
+
+    .profile span {
+      margin-right: 10px;
+    }
+
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .logout-btn {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: white;
+      color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background-color: #e2e6ea;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    button.create {
+      display: block;
+      margin: 0 auto 20px;
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .blog-card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .blog-card h3 {
+      margin: 0 0 5px;
+    }
+
+    .blog-card p {
+      color: #555;
+    }
+
+    .actions button {
+      margin-right: 8px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .read-btn {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .edit-btn {
+      background-color: #ffc107;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Blog Dashboard</h1>
+    <div class="profile" id="profileInfo"></div>
+  </div>
+
+  <div class="container">
+    <button class="create" onclick="createPost()">+ Create New Post</button>
+    <div id="postsContainer"></div>
+  </div>
+
+  <script>
+    // Load user info and show in profile
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    const profileInfo = document.getElementById("profileInfo");
+
+    if (!user) {
+      alert("Please login first.");
+      window.location.href = "login.html";
+    } else {
+      const nameOrEmail = user.fullName || user.username;
+      const imgTag = user.profilePic ? `<img src="${user.profilePic}" alt="Profile Picture">` : "";
+      profileInfo.innerHTML = `
+        <span>${nameOrEmail}</span>
+        ${imgTag}
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      `;
+    }
+
+    function logout() {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("currentUser");
+      window.location.href = "login.html";
+    }
+
+    const apiUrl = "http://localhost:8080/api/blogs";
+
+    function loadPosts() {
+      fetch(apiUrl)
+        .then((res) => res.json())
+        .then((posts) => {
+          const container = document.getElementById("postsContainer");
+          container.innerHTML = '';
+
+          posts.forEach((post) => {
+            const card = document.createElement("div");
+            card.className = "blog-card";
+            card.innerHTML = `
+              <h3>${post.title}</h3>
+              <p>${post.description}</p>
+              <p><small>By ${post.author} on ${post.date}</small></p>
+              <div class="actions">
+                <button class="read-btn" onclick="viewPost(${post.id})">Read More</button>
+                <button class="edit-btn" onclick="editPost(${post.id})">Edit</button>
+                <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        })
+        .catch(error => {
+          console.error("Failed to load posts:", error);
+          alert("Unable to load blog posts from backend.");
+        });
+    }
+
+    function createPost() {
+      window.location.href = "create.html";
+    }
+
+    function viewPost(id) {
+      localStorage.setItem("viewId", id);
+      window.location.href = "view.html";
+    }
+
+    function editPost(id) {
+      localStorage.setItem("editId", id);
+      window.location.href = "edit.html";
+    }
+
+    function deletePost(id) {
+      if (!confirm("Are you sure you want to delete this blog?")) return;
+
+      fetch(`${apiUrl}/${id}`, {
+        method: "DELETE"
+      })
+      .then(res => {
+        if (res.ok) {
+          loadPosts();
+        } else {
+          alert("Failed to delete blog.");
+        }
+      })
+      .catch(err => console.error("Delete error:", err));
+    }
+
+    loadPosts();
+  </script>
+
+</body>
+</html>

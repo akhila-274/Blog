@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Blog Post</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f2f2;
+      padding: 30px;
+    }
+    .container {
+      max-width: 600px;
+      background: white;
+      margin: auto;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .update-btn {
+      background-color: #007bff;
+      color: white;
+    }
+    .cancel-btn {
+      background-color: #6c757d;
+      color: white;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Edit Blog Post</h2>
+  <form id="editForm">
+    <label for="title">Title *</label>
+    <input type="text" id="title" required>
+
+    <label for="description">Short Description *</label>
+    <input type="text" id="description" required>
+
+    <label for="content">Content *</label>
+    <textarea id="content" rows="5" required></textarea>
+
+    <label for="author">Author *</label>
+    <input type="text" id="author" required>
+
+    <label for="image">Cover Image URL or Base64</label>
+    <input type="text" id="image">
+
+    <label for="tags">Tags (comma separated)</label>
+    <input type="text" id="tags">
+
+    <button type="submit" class="update-btn">Update Blog</button>
+    <button type="button" class="cancel-btn" onclick="goBack()">Cancel</button>
+  </form>
+</div>
+
+<script>
+  const id = localStorage.getItem("editId");
+  if (!id) {
+    alert("No blog ID found to edit.");
+    window.location.href = "blog.html";
+  }
+
+  fetch(`http://localhost:8080/api/blogs/${id}`)
+    .then((res) => res.json())
+    .then((blog) => {
+      document.getElementById("title").value = blog.title;
+      document.getElementById("description").value = blog.description;
+      document.getElementById("content").value = blog.content;
+      document.getElementById("author").value = blog.author;
+      document.getElementById("image").value = blog.image || "";
+      document.getElementById("tags").value = blog.tags || "";
+    })
+    .catch(err => {
+      console.error("Error loading blog:", err);
+      alert("Could not load the blog for editing.");
+      window.location.href = "blog.html";
+    });
+
+  document.getElementById("editForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const updatedBlog = {
+      title: document.getElementById("title").value.trim(),
+      description: document.getElementById("description").value.trim(),
+      content: document.getElementById("content").value.trim(),
+      author: document.getElementById("author").value.trim(),
+      image: document.getElementById("image").value.trim(),
+      tags: document.getElementById("tags").value.trim()
+    };
+
+    fetch(`http://localhost:8080/api/blogs/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedBlog),
+    })
+    .then((res) => {
+      if (res.ok) {
+        alert("Blog updated successfully!");
+        window.location.href = "blog.html";
+      } else {
+        alert("Failed to update blog.");
+      }
+    })
+    .catch(err => {
+      console.error("Update error:", err);
+      alert("Something went wrong while updating.");
+    });
+  });
+
+  function goBack() {
+    window.location.href = "blog.html";
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Blog Post</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      padding: 15px 30px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+
+    header img {
+      height: 50px;
+      margin-right: 15px;
+    }
+
+    .nav a {
+      text-decoration: none;
+      margin-right: 20px;
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    .profile {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .profile-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #007bff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      font-size: 18px;
+      overflow: hidden;
+    }
+
+    .profile-icon img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      padding: 15px;
+      width: 250px;
+      z-index: 1000;
+    }
+
+    .dropdown.show {
+      display: block;
+    }
+
+    .dropdown h4 {
+      margin: 0 0 10px;
+    }
+
+    .dropdown p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    .logout-btn {
+      margin-top: 10px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background-color: #c82333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    .meta, .tags {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .cover-img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .content {
+      line-height: 1.7;
+      color: #444;
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
+
+    .tags {
+      color: #888;
+      font-style: italic;
+    }
+
+    .back-btn {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header with profile -->
+  <header>
+    <div class="header-left">
+      <img src="logo.jpg" alt="Logo" />
+      
+    </div>
+
+    
+  </header>
+
+  
+  <!-- JavaScript -->
+   <!-- Blog Post Container -->
+  <div class="container" id="viewContainer">
+    <p>Loading blog post...</p>
+  </div>
+
+  <script>
+    // Profile logic
+    const user = JSON.parse(localStorage.getItem("user"));
+    const profileIcon = document.getElementById("profileIcon");
+    const defaultIcon = document.getElementById("defaultIcon");
+    const profileEmail = document.getElementById("profileEmail");
+
+    if (user && user.name && user.email) {
+      // Set profile icon to first letter
+      profileIcon.innerHTML = user.name.charAt(0).toUpperCase();
+      profileIcon.style.backgroundColor = "#007bff";
+      profileIcon.style.color = "white";
+      defaultIcon.style.display = "none"; // Hide default image
+      profileEmail.innerText = user.email;
+    }
+
+    function toggleDropdown() {
+      document.getElementById("profileDropdown").classList.toggle("show");
+    }
+
+    function logout() {
+      localStorage.clear();
+      alert("Logged out successfully.");
+      window.location.href = "login.html";
+    }
+
+    window.onclick = function (event) {
+      if (!event.target.closest(".profile")) {
+        document.getElementById("profileDropdown").classList.remove("show");
+      }
+    };
+
+    // Blog View Logic
+    const id = localStorage.getItem("viewId");
+
+    if (!id) {
+      document.getElementById("viewContainer").innerHTML = "<p>Invalid blog ID.</p>";
+    } else {
+      fetch(`http://localhost:8080/api/blogs/${id}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Blog not found");
+          return res.json();
+        })
+        .then((post) => {
+          const container = document.getElementById("viewContainer");
+          container.innerHTML = `
+            <h2>${post.title}</h2>
+            <div class="meta">By ${post.author} | ${post.date}</div>
+            ${post.image ? `<img src="${post.image}" class="cover-img" />` : ""}
+            <div class="content">${post.content}</div>
+            ${post.tags ? `<div class="tags">Tags: ${post.tags}</div>` : ""}
+            <button class="back-btn" onclick="goBack()">← Back to Blog</button>
+          `;
+        })
+        .catch(err => {
+          document.getElementById("viewContainer").innerHTML = `<p>Error loading blog: ${err.message}</p>`;
+        });
+    }
+
+    function goBack() {
+      window.location.href = "blog.html";
+    }
+  </script>
+
+</body>
+</html>

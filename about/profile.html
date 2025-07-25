@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Profile</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .profile-container {
+      max-width: 600px;
+      margin: auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .profile-detail {
+      margin: 20px 0;
+    }
+
+    .profile-detail label {
+      display: block;
+      color: #777;
+      margin-bottom: 5px;
+    }
+
+    .profile-detail span {
+      font-size: 16px;
+      color: #222;
+    }
+
+    .back-btn {
+      display: block;
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .back-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="profile-container">
+    <h2>User Profile</h2>
+    <div class="profile-detail">
+      <label>Name:</label>
+      <span id="userName"></span>
+    </div>
+    <div class="profile-detail">
+      <label>Email:</label>
+      <span id="userEmail"></span>
+    </div>
+    <a class="back-btn" href="blog.html">← Back to Blog</a>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      alert("No user data found. Redirecting to login.");
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("userName").innerText = user.name || "N/A";
+      document.getElementById("userEmail").innerText = user.email || "N/A";
+    }
+  </script>
+
+</body>
+</html>

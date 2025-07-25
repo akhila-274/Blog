@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>All Blogs</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #fff;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .header h1 {
+      margin: 0;
+      color: #333;
+    }
+
+    .login-notice, .post-link {
+      margin: 20px auto;
+      padding: 15px;
+      background-color: #fff;
+      max-width: 800px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .login-notice a, .post-link a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .login-notice a:hover, .post-link a:hover {
+      text-decoration: underline;
+    }
+
+    #blogList {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .blog-post {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .blog-post h3 {
+      margin-top: 0;
+      color: #007bff;
+    }
+
+    .meta {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .content {
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>All Blogs</h1>
+  </div>
+
+  <!-- Notice to login if not already -->
+  <div id="noticeContainer"></div>
+
+  <div id="blogList">
+    <p>Loading blogs...</p>
+  </div>
+
+  <script>
+    // Show login prompt or post link depending on user
+    const user = localStorage.getItem("user");
+    const noticeContainer = document.getElementById("noticeContainer");
+
+    if (user) {
+      // Show "Post a Blog" link
+      noticeContainer.innerHTML = `
+        <div class="post-link">
+          Welcome, <strong>${user}</strong>! Want to <a href="create.html">post a new blog</a>?
+        </div>
+      `;
+    } else {
+      // Prompt user to log in and save redirect
+      noticeContainer.innerHTML = `
+        <div class="login-notice">
+          If you want to post a blog, you have to <a href="login.html" onclick="handleLoginRedirect()">log in</a> first.
+        </div>
+      `;
+    }
+
+    function handleLoginRedirect() {
+      localStorage.setItem("loginRedirect", "blogs");
+    }
+
+    // Fetch blog posts from backend
+    fetch("http://localhost:8080/api/blogs")
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to load blogs");
+        return res.json();
+      })
+      .then(data => {
+        const blogList = document.getElementById("blogList");
+        if (data.length === 0) {
+          blogList.innerHTML = "<p>No blog posts yet.</p>";
+          return;
+        }
+
+        blogList.innerHTML = "";
+
+        data.forEach(post => {
+          const postDiv = document.createElement("div");
+          postDiv.className = "blog-post";
+
+          postDiv.innerHTML = `
+            <h3>${post.title}</h3>
+            <div class="meta">By ${post.author} | ${post.date}</div>
+            <div class="content">${post.content.slice(0, 200)}...</div>
+          `;
+
+          blogList.appendChild(postDiv);
+        });
+      })
+      .catch(err => {
+        document.getElementById("blogList").innerHTML = `<p>Error: ${err.message}</p>`;
+      });
+  </script>
+
+</body>
+</html>

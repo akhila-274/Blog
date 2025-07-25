@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fefefe;
+      margin: 0;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      color: orange;
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .main-container {
+      display: flex;
+      max-width: 1100px;
+      margin: auto;
+      background-color: #fff;
+      padding: 30px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+
+    .content {
+      flex: 2;
+      padding-right: 30px;
+    }
+
+    .image-placeholder {
+      flex: 1;
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #666;
+      height: 300px;
+    }
+
+    .welcome {
+      font-weight: bold;
+      color: black;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .description p {
+      font-size: 16px;
+      color: #444;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+
+    .learn-btn {
+      display: inline-block;
+      margin-top: 20px;
+      background-color: orange;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .learn-btn:hover {
+      background-color: #e68a00;
+    }
+
+    .learn-info {
+      display: none;
+      margin-top: 20px;
+      background-color: #fff3e0;
+      padding: 15px;
+      border-left: 4px solid orange;
+      border-radius: 5px;
+    }
+  </style>
+  <script>
+    function toggleLearnInfo() {
+      const info = document.getElementById('learn-more-info');
+      info.style.display = info.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+</head>
+<body>
+
+  <h1>About Us</h1>
+
+  <div class="main-container">
+    <div class="content">
+      <div class="welcome">Welcome to Our Website</div>
+      <div class="description">
+        <p>This platform is built to fuel curiosity and creativity across diverse fields—travel, education, technology, cooking, motivation, and music.</p>
+        <p>It’s designed for everyone—from learners and explorers to creators and teachers. We make it simple for users to find, share, and contribute content that adds value.</p>
+        <p>Through user-friendly navigation and a sleek posting experience, members can log in, upload videos, and engage with fresh content anytime.</p>
+        <p>Whether you're looking for information or inspiration, our site offers a community-driven space filled with voices from all backgrounds.</p>
+        <p>Your knowledge matters. Your creativity belongs here. Let’s build something meaningful together.</p>
+      </div>
+
+      <button class="learn-btn" onclick="toggleLearnInfo()">Learn More</button>
+      <div id="learn-more-info" class="learn-info">
+        <p>Our application isn't just a platform—it's a creative ecosystem. Post videos, exchange ideas, and explore a wide range of user-generated content all in one space.</p>
+        <p>With content categories that grow based on user interest, the platform adapts to your voice. Whether you want to teach, entertain, inspire, or simply share—this is your stage.</p>
+      </div>
+    </div>
+
+    <div class="image-placeholder">
+      <img src="about.jpg">
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Blog</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      background: #fff;
+      margin: 0 auto;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #222;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      background-color: #28a745;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Create Blog</h2>
+
+  <form id="createForm">
+    <label for="title">Title *</label>
+    <input type="text" id="title" required>
+
+    <label for="description">Short Description *</label>
+    <input type="text" id="description" required>
+
+    <label for="content">Content *</label>
+    <textarea id="content" rows="5" required></textarea>
+
+    <label for="author">Author *</label>
+    <input type="text" id="author" required>
+
+    <label for="image">Cover Image URL (Optional)</label>
+    <input type="text" id="image">
+
+    <label for="tags">Tags (comma separated)</label>
+    <input type="text" id="tags">
+
+    <button type="submit">Post Blog</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("createForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const blog = {
+      title: document.getElementById("title").value.trim(),
+      description: document.getElementById("description").value.trim(),
+      content: document.getElementById("content").value.trim(),
+      author: document.getElementById("author").value.trim(),
+      image: document.getElementById("image").value.trim(),
+      tags: document.getElementById("tags").value.trim()
+    };
+
+    fetch("http://localhost:8080/api/blogs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(blog),
+    })
+    .then((res) => {
+      if (!res.ok) throw new Error("Failed to post blog");
+      return res.json();
+    })
+    .then(() => {
+      alert("Blog created successfully!");
+      window.location.href = "blog.html";
+    })
+    .catch((err) => {
+      console.error(err);
+      alert("Error posting blog: " + err.message);
+    });
+  });
+</script>
+
+</body>
+</html>

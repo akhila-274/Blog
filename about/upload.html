@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            padding: 40px;
+        }
+        .upload-form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        input[type="submit"] {
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="upload-form">
+    <h2>Upload Video</h2>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="videoFile" accept="video/*" required><br>
+        <input type="submit" value="Upload">
+    </form>
+</div>
+
+</body>
+</html>
